@@ -1,27 +1,24 @@
 # Sharingan Evolution Addon — Forge 1.20.1
 
-## Transplante ocular independente
+Addon para Minecraft Forge 1.20.1 / Java 17, integrado ao Narutoto 0.4.2.
 
-A interface agora oferece operações explícitas por lado: retirar, implantar Sharingan ou implantar Byakugan no olho esquerdo e, separadamente, no direito. Isso permite combinações como Sharingan/Byakugan, olho normal/Sharingan, Byakugan/normal e ambos iguais.
+## Byakugan Vision
+- Filtro de visão monocromático com contraste reforçado e tonalidade fria perolada.
+- Rede de pontos de chakra luminosos e pulsantes sobre entidades vivas próximas (até 72 blocos), incluindo jogadores e mobs.
+- Os pontos representam centros de chakra/tenketsu estilizados e são renderizados através de obstáculos, como uma visão especial.
+- O filtro e os pontos só aparecem quando o Byakugan está ativo no estado do Narutoto.
 
-As escolhas ficam salvas no PersistentData do jogador. As flags do Narutoto são sincronizadas como compatibilidade por tipo presente (o Narutoto base representa dojutsu por jogador/clã, não por olho).
-
-## Limitação importante de renderização
-
-O Narutoto 0.4.2 usa procedimentos próprios de renderização de olhos. Suas variáveis públicas representam o dojutsu do jogador e não fornecem, por si só, um seletor independente para olho esquerdo/direito. Portanto este addon corrige a lógica e a interface de transplante, mas a aparência mista de cada olho exige uma integração específica no renderer/modelo do Narutoto. Não se deve considerar a renderização independente concluída apenas pela compilação deste addon.
+## Olhos independentes
+- P remove o olho esquerdo.
+- Shift + P remove o olho direito.
+- Os olhos removidos retornam como itens Eyeball originais do Narutoto.
+- A tela de transplante permite implantar cada lado independentemente.
 
 ## Build
+Use Java 17 e Gradle 8.x:
 
-Requer Java 17, Forge 1.20.1-47.4.10 e `libs/narutoto-0.4.2-forge-1.20.1.jar`.
+```bash
+gradle --no-daemon build
+```
 
-No GitHub, o workflow `.github/workflows/build.yml` executa `gradle --no-daemon clean build` e publica `build/libs/*.jar` como artefato.
-
-
-## Retirada individual dos olhos
-
-- `P`: retira o olho esquerdo e entrega o item correspondente do Narutoto ao inventário.
-- `Shift + P`: retira o olho direito e entrega o item correspondente do Narutoto ao inventário.
-- Os itens usados são `sharingan_eyeball` e `byakugan_eyeball`, aproveitando os ícones/texturas originais do Narutoto 0.4.2.
-- A tela de transplante continua permitindo implantar Sharingan ou Byakugan separadamente em cada lado.
-
-A compilação precisa ser executada pelo Gradle 8.8/Java 17 (workflow do GitHub Actions), pois este ambiente não possui Gradle instalado.
+O JAR do Narutoto 0.4.2 deve estar em `libs/narutoto-0.4.2-forge-1.20.1.jar`.

@@ -5,8 +5,9 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.TickEvent;
@@ -74,22 +75,30 @@ public final class ByakuganVision {
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-        for (Entity entity : mc.level.players()) {
-            if (!(entity instanceof Player) || entity == mc.player || !entity.isAlive()) continue;
-            if (entity.distanceToSqr(mc.player) > 96.0D * 96.0D) continue;
+        float pulse = 0.82F + 0.18F * Mth.sin((mc.level.getGameTime() + event.getPartialTick()) * 0.18F);
+        for (Entity entity : mc.level.entitiesForRendering()) {
+            if (!(entity instanceof LivingEntity living) || entity == mc.player || !entity.isAlive()) continue;
+            if (entity.distanceToSqr(mc.player) > 72.0D * 72.0D) continue;
 
             pose.pushPose();
             pose.translate(entity.getX() - camera.x, entity.getY() - camera.y, entity.getZ() - camera.z);
             pose.mulPose(mc.getEntityRenderDispatcher().cameraOrientation());
             float height = entity.getBbHeight();
-            // Pontos de chakra estilizados ao longo dos principais centros de energia.
-            point(buffer, pose, 0.0F, height * 0.88F, 0.0F, 0.105F);
-            point(buffer, pose, 0.0F, height * 0.70F, 0.0F, 0.085F);
-            point(buffer, pose, -0.17F, height * 0.68F, 0.0F, 0.065F);
-            point(buffer, pose, 0.17F, height * 0.68F, 0.0F, 0.065F);
-            point(buffer, pose, 0.0F, height * 0.48F, 0.0F, 0.075F);
-            point(buffer, pose, 0.0F, height * 0.27F, 0.0F, 0.065F);
-            point(buffer, pose, 0.0F, height * 0.08F, 0.0F, 0.065F);
+            // Rede de tenketsu: cabeça, garganta, peito, ombros, abdômen,
+            // cotovelos, mãos, quadril, joelhos e pés.
+            chakraNode(buffer, pose, 0.0F, height * 0.91F, 0.0F, 0.095F, pulse);
+            chakraNode(buffer, pose, 0.0F, height * 0.79F, 0.0F, 0.060F, pulse);
+            chakraNode(buffer, pose, 0.0F, height * 0.68F, 0.0F, 0.105F, pulse);
+            chakraNode(buffer, pose, -0.22F, height * 0.69F, 0.0F, 0.070F, pulse);
+            chakraNode(buffer, pose, 0.22F, height * 0.69F, 0.0F, 0.070F, pulse);
+            chakraNode(buffer, pose, 0.0F, height * 0.53F, 0.0F, 0.085F, pulse);
+            chakraNode(buffer, pose, -0.28F, height * 0.49F, 0.0F, 0.060F, pulse);
+            chakraNode(buffer, pose, 0.28F, height * 0.49F, 0.0F, 0.060F, pulse);
+            chakraNode(buffer, pose, -0.34F, height * 0.31F, 0.0F, 0.055F, pulse);
+            chakraNode(buffer, pose, 0.34F, height * 0.31F, 0.0F, 0.055F, pulse);
+            chakraNode(buffer, pose, 0.0F, height * 0.30F, 0.0F, 0.075F, pulse);
+            chakraNode(buffer, pose, -0.13F, height * 0.08F, 0.0F, 0.065F, pulse);
+            chakraNode(buffer, pose, 0.13F, height * 0.08F, 0.0F, 0.065F, pulse);
             pose.popPose();
         }
 
@@ -99,11 +108,13 @@ public final class ByakuganVision {
         RenderSystem.disableBlend();
     }
 
-    private static void point(BufferBuilder buffer, PoseStack pose, float x, float y, float z, float radius) {
+    private static void chakraNode(BufferBuilder buffer, PoseStack pose, float x, float y, float z,
+                                   float radius, float pulse) {
         var matrix = pose.last().pose();
-        // Halo externo e núcleo claro para dar aparência de ponto brilhante.
-        quad(buffer, matrix, x, y, z, radius * 1.9F, 105, 225, 255, 105);
-        quad(buffer, matrix, x, y, z, radius * 0.62F, 235, 255, 255, 255);
+        // Três camadas: aura azul ampla, núcleo branco e pequeno brilho central.
+        quad(buffer, matrix, x, y, z, radius * 2.8F * pulse, 45, 190, 255, 34);
+        quad(buffer, matrix, x, y, z, radius * 1.55F * pulse, 95, 225, 255, 105);
+        quad(buffer, matrix, x, y, z, radius * 0.48F, 245, 255, 255, 245);
     }
 
     private static void quad(BufferBuilder buffer, org.joml.Matrix4f matrix,
