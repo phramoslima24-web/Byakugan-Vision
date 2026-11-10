@@ -1,0 +1,29 @@
+name: Build Byakugan Vision
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Check required files
+        run: test -f build.gradle && test -f libs/narutoto-0.4.2-forge-1.20.1.jar && test -f .github/workflows/build.yml
+      - name: Build
+        run: gradle --no-daemon clean build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Byakugan-Vision-1.20.1
+          path: build/libs/*.jar
+          if-no-files-found: error

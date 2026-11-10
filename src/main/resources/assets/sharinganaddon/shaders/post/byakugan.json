@@ -1,0 +1,10 @@
+{
+  "targets": ["swap"],
+  "passes": [
+    {
+      "name": "sharinganaddon:byakugan",
+      "intarget": "minecraft:main",
+      "outtarget": "swap"
+    }
+  ]
+}

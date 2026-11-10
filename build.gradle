@@ -1,0 +1,45 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+group = 'com.sharinganaddon'
+version = '1.0.0'
+archivesBaseName = 'sharingan-evolution-addon'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    copyIdeResources = true
+    runs {
+        client { workingDirectory project.file('run'); mods { sharinganaddon { source sourceSets.main } } }
+        server { workingDirectory project.file('run'); mods { sharinganaddon { source sourceSets.main } } }
+    }
+}
+
+repositories {
+    maven { url = 'https://maven.minecraftforge.net' }
+    mavenCentral()
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.10'
+    // Narutoto é necessário em tempo de compilação e execução.
+    implementation fg.deobf(files('libs/narutoto-0.4.2-forge-1.20.1.jar'))
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    manifest {
+        attributes([
+            'Specification-Title': 'Sharingan Evolution Addon',
+            'Specification-Vendor': 'Community',
+            'Specification-Version': '1',
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version
+        ])
+    }
+}
