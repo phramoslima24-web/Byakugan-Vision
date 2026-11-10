@@ -1,5 +1,5 @@
 {
-  "vertex": "minecraft:post/blit",
+  "vertex": "minecraft:blit",
   "fragment": "sharinganaddon:byakugan",
   "samplers": [
     { "name": "DiffuseSampler" }
